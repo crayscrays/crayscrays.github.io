@@ -1,0 +1,161 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    </head>
+<script src="https://aframe.io/releases/1.1.0/aframe.min.js"></script>
+<!-- we import arjs version without NFT but with marker + location based support -->
+<script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.3/lottie.min.js"></script>
+<script src="https://kit.fontawesome.com/c9500776a0.js" crossorigin="anonymous"></script>
+<script type="text/javascript" src="./web3.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://unpkg.com/3box/dist/3box.min.js"></script>
+    <script type="text/javascript">
+        window.addEventListener('load', function () {
+            if (typeof web3 !== 'undefined') {
+                console.log('Web3 Detected! ' + web3.currentProvider.constructor.name)
+                window.web3 = new Web3(web3.currentProvider);
+            } else {
+                console.log('No Web3 Detected... using HTTP Provider')
+                window.web3 = new Web3(new Web3.providers.HttpProvider("https://rinkeby.infura.io/v3/2aa57adb91024753b691e36558522674"));
+                //window.web3 = new Web3(new Web3.providers.HttpProvider("https://mainnet.infura.io/v3/1fa4bebe426b4ad3a0a921484ce0332f"));
+            }
+        })
+
+        function getERC20TokenBalance(tokenAddress, callback) {
+
+      // ERC20 トークンの残高を取得するための最小限のABI
+      let minABI = [
+        // balanceOf
+        {
+          "constant":true,
+          "inputs":[{"name":"_owner","type":"address"}],
+          "name":"balanceOf",
+          "outputs":[{"name":"balance","type":"uint256"}],
+          "type":"function"
+        },
+        // decimals 
+          {
+          "constant": true,
+          "inputs": [{"name": "tokenId","type": "uint256"}],
+          "name": "ownerOf",
+          "outputs": [{"name": "","type": "address"}],
+          "payable": false,
+          "stateMutability": "view",
+          "type": "function",
+          "signature": "0x6352211e"
+        }
+      ];
+
+      //  ABI とコントラクト（ERC20トークン）のアドレスから、コントラクトのインスタンスを取得 
+      let contract = web3.eth.contract(minABI).at(tokenAddress);
+      // 引数にウォレットのアドレスを渡して、balanceOf 関数を呼ぶ
+      //0x50f5474724e0ee42d9a4e711ccfb275809fd6d4a SANDBOX
+      //contract.ownerOf('18429');
+      
+      var address
+        address = 1
+
+      contract.ownerOf(address, (error, balance) => {
+          callback(balance);
+      });
+      
+    }
+
+      let tokenAddress = '0x8B35bE0922834031e8036Eb3204b9adDa403cC9F';
+            getERC20TokenBalance(tokenAddress, (balance) => {
+    $.getJSON('https://ipfs.3box.io/profile?address='+balance, function(data) {
+        var text = `${data.name}`
+        $("#marker001").html(text);
+        });   
+    });
+    
+    ggfunction(){
+      return "sohem";
+    }
+    
+    </script>
+<script>
+    AFRAME.registerComponent("update-texture", {
+        init: function () {
+            this.el.addEventListener("loaded", e => {
+                const mesh = this.el.getObject3D("mesh");
+                this.texture = mesh.material.map
+            })
+        },
+        tick: function () {
+            if (this.texture) {
+                this.texture.needsUpdate = true;
+            }
+        }
+    })
+</script>
+
+<body style="margin : 0px; overflow: hidden;">
+    
+    <canvas id="animation" width="1024" height="1024" style="display: none;"></canvas>
+    <canvas id="animation1" width="1024" height="1024" style="display: none;"></canvas>
+    <a-scene embedded vr-mode-ui="enabled: false" arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono_and_matrix; matrixCodeType: 3x3;">
+    <!--- a-scene embedded arjs="detectionMode: mono_and_matrix; matrixCodeType: 3x3;"--->
+        <a-marker smooth="true" type="barcode" value="1">
+            <a-plane position="0 1 0" scale="10 10 10" rotation="-90 0 0" material="shading: flat; transparent: true; src: #animation" update-texture></a-plane>
+            <!--a-entity position="0 1 6" rotation="-90 0 0" scale="1 2 1"
+  geometry="primitive: plane; height: auto; width: 5"
+  material="color: black; opacity: 0.2;"
+  text="value: This text will be 4 units wide."></a-entity-->
+            <a-plane position="0 1 6" rotation="-90 90 0" scale="1 2 1" material="color: black; opacity: 0.2;"></a-plane>
+            <a-text value=ggfunction() position="0 1 6" rotation="-90 0 0" material="color: white" align="center"  onclick="window.location.href='https://www.pathdao.io'"></a-text>
+        </a-marker>
+
+            <a-marker smooth="true" type="barcode" value="6">
+            <a-plane position="0 1 0" scale="10 10 10" rotation="-90 0 0" material="shading: flat; transparent: true; src: #animation1" update-texture></a-plane>
+            <!--a-entity position="0 1 6" rotation="-90 0 0" scale="1 2 1"
+  geometry="primitive: plane; height: auto; width: 5"
+  material="color: black; opacity: 0.2;"
+  text="value: This text will be 4 units wide."></a-entity-->
+            <a-plane position="0 1 6" rotation="-90 90 0" scale="1 2 1" material="color: black; opacity: 0.2;"></a-plane>
+            <a-text value="Crays" position="0 1 6" rotation="-90 0 0" material="color: white" align="center"></a-text>
+        </a-marker>
+        <a-entity camera></a-entity>
+    </a-scene>
+    <script>
+        // load the lottie animation
+        const canvas = document.getElementById('animation')
+        const context = canvas.getContext("2d");
+
+        const animation = bodymovin.loadAnimation({
+            renderer: "canvas",
+            rendererSettings: {
+                context: context
+            },
+            loop: true,
+            autplay: true,
+            path: "BLACK.json"
+        });
+
+                // load the lottie animation
+        const canvas1 = document.getElementById('animation1')
+        const context1 = canvas1.getContext("2d");
+
+        const animation1 = bodymovin.loadAnimation({
+            renderer: "canvas",
+            rendererSettings: {
+                context: context1
+            },
+            loop: true,
+            autplay: true,
+            path: "asd.json"
+        });
+    </script>
+    <script>
+// Workaround for an AR.js bug (https://github.com/jeromeetienne/AR.js/issues/410)
+const sceneEl = document.querySelector('a-scene');
+sceneEl.addEventListener('loaded', () => {
+    sceneEl.camera = new THREE.PerspectiveCamera();
+});
+</script>
+</body>
+
+</html>
